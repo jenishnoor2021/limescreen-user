@@ -122,7 +122,23 @@
                             <td>{{ $customer->email }}</td>
                             <td>{{ $customer->mobile }}</td>
                             <td>{{ $customer->whatsapp_number }}</td>
-                            <td>{{ $customer->status }}</td>
+                            <td><select class="form-select form-select-sm status-dropdown"
+                                    data-id="{{ $customer->id }}">
+                                    <option value="NewLead" {{ $customer->status == 'NewLead' ? 'selected' : '' }}>
+                                        New Lead</option>
+                                    <option value="Visited" {{ $customer->status == 'Visited' ? 'selected' : '' }}>
+                                        Visited</option>
+                                    <option value="PhotoReceived"
+                                        {{ $customer->status == 'PhotoReceived' ? 'selected' : '' }}>Photo Received
+                                    </option>
+                                    <option value="Interested"
+                                        {{ $customer->status == 'Interested' ? 'selected' : '' }}>Interested
+                                    </option>
+                                    <option value="NotInterested"
+                                        {{ $customer->status == 'NotInterested' ? 'selected' : '' }}>Not interested
+                                    </option>
+                                </select>
+                            </td>
                             <td>
                                 <p class="add-read-more show-less-content">{{ $customer->remark }}</p>
                             </td>
