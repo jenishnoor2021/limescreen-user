@@ -10,6 +10,7 @@
             <th><strong>WA No</strong></th>
             <th><strong>City</strong></th>
             <th><strong>Status</strong></th>
+            <th><strong>Visited Date</strong></th>
             <th><strong>Remark</strong></th>
             <th><strong>Date</strong></th>
         </tr>
@@ -26,6 +27,7 @@
             <td>{{ $customer->whatsapp_number }}</td>
             <td>{{ $customer->city }}</td>
             <td>{{ $customer->status }}</td>
+            <td>{{ $customer->visited_date->format('d-m-Y') }}</td>
             <td>{{ $customer->remark }}</td>
             <td>{{ $customer->created_at->format('d-m-Y') }}</td>
         </tr>

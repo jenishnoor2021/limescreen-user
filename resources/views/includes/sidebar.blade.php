@@ -38,14 +38,12 @@
                 </a>
             </li>
 
-            @if(Session::get('user')['role'] == 'Admin')
             <li>
                 <a href="/admin/report" class="waves-effect">
                     <i class="bx bx-home-circle"></i>
                     <span key="t-chat">Report</span>
                 </a>
             </li>
-            @endif
         </ul>
     </div>
     <!-- Sidebar -->

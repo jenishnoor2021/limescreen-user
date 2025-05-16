@@ -122,23 +122,7 @@
                             <td>{{ $customer->email }}</td>
                             <td>{{ $customer->mobile }}</td>
                             <td>{{ $customer->whatsapp_number }}</td>
-                            <td><select class="form-select form-select-sm status-dropdown"
-                                    data-id="{{ $customer->id }}">
-                                    <option value="NewLead" {{ $customer->status == 'NewLead' ? 'selected' : '' }}>
-                                        New Lead</option>
-                                    <option value="Visited" {{ $customer->status == 'Visited' ? 'selected' : '' }}>
-                                        Visited</option>
-                                    <option value="PhotoReceived"
-                                        {{ $customer->status == 'PhotoReceived' ? 'selected' : '' }}>Photo Received
-                                    </option>
-                                    <option value="Interested"
-                                        {{ $customer->status == 'Interested' ? 'selected' : '' }}>Interested
-                                    </option>
-                                    <option value="NotInterested"
-                                        {{ $customer->status == 'NotInterested' ? 'selected' : '' }}>Not interested
-                                    </option>
-                                </select>
-                            </td>
+                            <td>{{ $customer->status }}</td>
                             <td>
                                 <p class="add-read-more show-less-content">{{ $customer->remark }}</p>
                             </td>
@@ -154,30 +138,6 @@
 @endsection
 
 @section('script')
-<script>
-    $(document).ready(function() {
-        $('.status-dropdown').change(function() {
-            var status = $(this).val();
-            var customerId = $(this).data('id');
-
-            $.ajax({
-                url: '/customers/update-status', // Your route here
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    id: customerId,
-                    status: status
-                },
-                success: function(response) {
-                    alert(response.message || 'Status updated successfully');
-                },
-                error: function(xhr) {
-                    alert('Failed to update status');
-                }
-            });
-        });
-    });
-</script>
 <script>
     function toggleCustomRange(value) {
         const show = value === 'custom';

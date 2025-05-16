@@ -278,11 +278,13 @@ class AdminCustomerController extends Controller
     public function report()
     {
         $branches = Branch::orderBy('id', 'DESC')->get();
-        return view('admin.customers.report', compact('branches'));
+        $data = [];
+        return view('admin.customers.report', compact('branches', 'data'));
     }
 
     public function exportShow(Request $request)
     {
+        $branches = Branch::orderBy('id', 'DESC')->get();
         $data = Customer::query()
             ->when(
                 $request->filled('branches_id') && $request->branches_id !== 'ALL',
@@ -316,11 +318,12 @@ class AdminCustomerController extends Controller
             return Excel::download(new CustomersExport($data), $fileName, \Maatwebsite\Excel\Excel::XLSX);
         }
 
-        $view = view('partials.customer_report_modal', compact('data'))->render();
-        return response()->json([
-            'html' => $view,
-            'hasData' => $data->isNotEmpty(),
-        ]);
+        // $view = view('partials.customer_report_modal', compact('data'))->render();
+        // return response()->json([
+        //     'html' => $view,
+        //     'hasData' => $data->isNotEmpty(),
+        // ]);
+        return view('admin.customers.report', compact('branches', 'data'));
     }
 
     public function bulkDelete(Request $request)
