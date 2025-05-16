@@ -100,10 +100,31 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('role', '!=', 'Admin')->get();
-        return view('admin.users.index', compact('users'));
+        $branches = Branch::orderBy('id', 'DESC')->get();
+        $loginRole = Session::get('user')->role;
+        $loginBranchId = Session::get('user')->branches_id;
+
+        $usersQuery = User::query();
+
+        if ($loginRole != 'Admin') {
+            $usersQuery->where('branches_id', $loginBranchId)
+                ->where('role', '!=', 'BreanchHead');
+        } else {
+            $usersQuery->where('role', '!=', 'Admin');
+
+            if ($request->filled('branch')) {
+                $usersQuery->where('branches_id', $request->branch);
+            }
+        }
+
+        $users = $usersQuery
+            ->orderByRaw("CASE WHEN role = 'BreanchHead' THEN 0 ELSE 1 END")
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        return view('admin.users.index', compact('users', 'branches'));
     }
 
     /**
@@ -135,9 +156,9 @@ class AdminController extends Controller
             'branches_id' => 'required',
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'name' => ['required', 'string', 'max:255'],
-            'mobile' => 'required',
-            'address' => 'required',
-            'email' => ['required', 'email', 'max:255', 'unique:users'],
+            // 'mobile' => 'required',
+            // 'address' => 'required',
+            // 'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => 'required',
         ]);
 
@@ -192,9 +213,9 @@ class AdminController extends Controller
             'branches_id' => 'required',
             'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'name' => ['required', 'string', 'max:255'],
-            'mobile' => 'required',
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'address' => 'required',
+            // 'mobile' => 'required',
+            // 'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            // 'address' => 'required',
             'password' => ['nullable', 'string', 'min:8'],
         ]);
 

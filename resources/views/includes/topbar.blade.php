@@ -9,7 +9,7 @@
                 <span class="logo-lg">
                     <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" height="17">
                 </span> -->
-                <h1 class="text-white">DHD</h1>
+                <h1 class="text-white">LIMESCREEN</h1>
             </a>
 
             <a href="{{ URL::to('/admin/dashboard') }}" class="logo logo-light">
@@ -19,7 +19,7 @@
                 <span class="logo-lg">
                     <img src="{{ asset('assets/images/logo-light.png') }}" alt="" height="19">
                 </span> -->
-                <h1 class="text-white">DHD</h1>
+                <h1 class="text-white">LIMESCREEN</h1>
             </a>
         </div>
 

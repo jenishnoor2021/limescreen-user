@@ -18,8 +18,8 @@ class CreateUsersTable extends Migration
             $table->unsignedBigInteger('branches_id')->unsigned()->index();
             $table->string('name');
             $table->enum('role', ['Admin', 'User', 'BreanchHead'])->default('User');
-            $table->string('email')->unique();
-            $table->string('username');
+            $table->string('email')->nullable();
+            $table->string('username')->unique();
             $table->string('mobile')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

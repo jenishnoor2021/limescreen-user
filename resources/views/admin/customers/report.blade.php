@@ -35,7 +35,7 @@
 
                     <div data-repeater-list="group-a">
                         <div data-repeater-item class="row">
-                            @if(Session::get('user')['role'] != 'Admin')
+                            @if(Session::get('user')['role'] == 'User')
                             <input type="hidden" name="users_id" value="{{Session::get('user')['id']}}">
                             <input type="hidden" name="branches_id" value="{{Session::get('user')['branches_id']}}">
                             @else

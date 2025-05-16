@@ -23,28 +23,12 @@ class AdminCustomerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function index()
-    // {
-    //     if (Auth::user()->role == 'Admin') {
-    //         $customers = Customer::orderBy('id', 'DESC')->get();
-    //     } else if (Auth::user()->role == 'BreanchHead') {
-    //         $loginBranchesId = Auth::user()->branches_id;
-    //         $users = User::where('branches_id', $loginBranchesId)->get();
-    //         $customers = Customer::where('branches_id', $loginBranchesId)->whereIn('users_id', $users)->orderBy('id', 'DESC')->get();
-    //     } else {
-    //         $customers = Customer::where('users_id', Auth::user()->id)->orderBy('id', 'DESC')->get();
-    //     }
-    //     return view('admin.customers.index', compact('customers'));
-    // }
-
     public function index(Request $request)
     {
         $filter = $request->input('date_filter', 'today');
 
-        // Start building the query
         $query = Customer::query();
 
-        // Role-based data scope
         if (Auth::user()->role === 'Admin') {
             // No restriction
         } elseif (Auth::user()->role === 'BreanchHead') {
@@ -98,6 +82,10 @@ class AdminCustomerController extends Controller
             default:
                 $query->whereDate('created_at', Carbon::today());
                 break;
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         // Final data fetch
@@ -265,11 +253,19 @@ class AdminCustomerController extends Controller
     {
         $request->validate([
             'id' => 'required|exists:customers,id',
-            'status' => 'required|string'
+            'status' => 'required|string',
+            'visited_date' => 'nullable|date'
         ]);
 
         $customer = Customer::find($request->id);
         $customer->status = $request->status;
+
+        if ($request->status === 'Visited' && $request->visited_date) {
+            $customer->visited_date = $request->visited_date;
+        } else {
+            $customer->visited_date = '';
+        }
+
         $customer->save();
 
         return response()->json(['message' => 'Status updated successfully']);
@@ -277,14 +273,26 @@ class AdminCustomerController extends Controller
 
     public function report()
     {
-        $branches = Branch::orderBy('id', 'DESC')->get();
+        $loginBranchesId = Session::get('user')->branches_id;
+        $loginRole = Session::get('user')->role;
+        if ($loginRole == 'Admin') {
+            $branches = Branch::orderBy('id', 'DESC')->get();
+        } else {
+            $branches = Branch::where('id', $loginBranchesId)->get();
+        }
         $data = [];
         return view('admin.customers.report', compact('branches', 'data'));
     }
 
     public function exportShow(Request $request)
     {
-        $branches = Branch::orderBy('id', 'DESC')->get();
+        $loginBranchesId = Session::get('user')->branches_id;
+        $loginRole = Session::get('user')->role;
+        if ($loginRole == 'Admin') {
+            $branches = Branch::orderBy('id', 'DESC')->get();
+        } else {
+            $branches = Branch::where('id', $loginBranchesId)->get();
+        }
         $data = Customer::query()
             ->when(
                 $request->filled('branches_id') && $request->branches_id !== 'ALL',

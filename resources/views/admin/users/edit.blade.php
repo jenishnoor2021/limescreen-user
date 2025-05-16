@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email<span class="text-danger">*</span></label>
@@ -95,7 +95,7 @@
                     @if ($errors->has('address'))
                     <div class="error text-danger">{{ $errors->first('address') }}</div>
                     @endif
-                </div>
+                </div> -->
 
                 <div class="row">
                     <div class="col-lg-4">
@@ -154,25 +154,20 @@
                 // address: {
                 //     required: true,
                 // },
-                mobile: {
-                    required: true,
-                },
+                // mobile: {
+                //     required: true,
+                // },
                 password: {
                     required: true,
                 },
-                email: {
-                    required: true,
-                }
+                // email: {
+                //     required: true,
+                // }
             },
             submitHandler: function(form) {
                 form.submit();
             }
         });
-    });
-</script>
-<script>
-    document.getElementById('mobile').addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '').slice(0, 10);
     });
 </script>
 @endsection
