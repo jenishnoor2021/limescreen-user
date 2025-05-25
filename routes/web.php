@@ -84,11 +84,17 @@ Route::group(['middleware' => ['auth', 'usersession']], function () {
     Route::post('admin/customers/bulk-delete', [AdminCustomerController::class, 'bulkDelete'])->name('admin.customers.bulkDelete');
 
     Route::get('/get-users-by-branch/{branch_id}', [AdminCustomerController::class, 'getUsersByBranch']);
+
     Route::get('/admin/import', [AdminCustomerController::class, 'import'])->name('admin.import');
     Route::post('/admin/import/store', [AdminCustomerController::class, 'importStore'])->name('admin.import.store');
+
     Route::post('/customers/update-status', [AdminCustomerController::class, 'updateStatus']);
+
     Route::get('/admin/report', [AdminCustomerController::class, 'report'])->name('admin.report');
     Route::get('/admin/export/show', [AdminCustomerController::class, 'exportShow'])->name('admin.export.show');
+
+    Route::get('/admin/delete-leads', [AdminCustomerController::class, 'deleteLeads'])->name('admin.delete.leads');
+    Route::get('/admin/delete-leads/show', [AdminCustomerController::class, 'deleteLeadsShow'])->name('admin.delete-leads.show');
 });
 
 //Clear Cache facade value:

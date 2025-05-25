@@ -25,7 +25,7 @@ class CreateCustomersTable extends Migration
             $table->text('address')->nullable();
             $table->string('city')->nullable();
             $table->string('status')->default('NewLead');
-            $table->string('visited_date')->nullable();
+            $table->string('status_change_date')->nullable();
             $table->text('remark')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

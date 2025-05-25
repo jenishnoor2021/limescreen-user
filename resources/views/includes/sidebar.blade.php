@@ -44,6 +44,16 @@
                     <span key="t-chat">Report</span>
                 </a>
             </li>
+
+            @if(Session::get('user')['role'] == 'Admin')
+            <li>
+                <a href="/admin/delete-leads" class="waves-effect">
+                    <i class="bx bx-home-circle"></i>
+                    <span key="t-chat">Delete Leads</span>
+                </a>
+            </li>
+            @endif
+
         </ul>
     </div>
     <!-- Sidebar -->

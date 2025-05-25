@@ -44,6 +44,7 @@ class CustomerImport implements ToCollection
                 'city'             => $row[5] ?? null,
                 'users_id'         => $this->users_id,
                 'branches_id'      => $this->branches_id,
+                'status_change_date' => today(),
             ]);
         }
     }

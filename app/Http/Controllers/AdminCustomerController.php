@@ -254,16 +254,16 @@ class AdminCustomerController extends Controller
         $request->validate([
             'id' => 'required|exists:customers,id',
             'status' => 'required|string',
-            'visited_date' => 'nullable|date'
+            'status_change_date' => 'nullable|date'
         ]);
 
         $customer = Customer::find($request->id);
         $customer->status = $request->status;
 
-        if ($request->status === 'Visited' && $request->visited_date) {
-            $customer->visited_date = $request->visited_date;
+        if ($request->status_change_date === 'Visited' && $request->status_change_date) {
+            $customer->status_change_date = $request->status_change_date;
         } else {
-            $customer->visited_date = '';
+            $customer->status_change_date = today();
         }
 
         $customer->save();
@@ -305,19 +305,19 @@ class AdminCustomerController extends Controller
                 $q->where('users_id', $request->users_id)
             )
             ->when(
-                is_array($request->status) && count($request->status),
+                $request->filled('status') && is_array($request->status) && !in_array('ALL', $request->status) && count($request->status),
                 fn($q) =>
                 $q->whereIn('status', $request->status)
             )
             ->when(
                 $request->start_date,
                 fn($q, $start) =>
-                $q->whereDate('created_at', '>=', $start)
+                $q->whereDate($request->date_by ?? 'created_at', '>=', $start)
             )
             ->when(
                 $request->end_date,
                 fn($q, $end) =>
-                $q->whereDate('created_at', '<=', $end)
+                $q->whereDate($request->date_by ?? 'created_at', '<=', $end)
             )
             ->get();
 
@@ -345,5 +345,58 @@ class AdminCustomerController extends Controller
         Customer::whereIn('id', $ids)->delete();
 
         return response()->json(['success' => true, 'message' => 'Selected Leads deleted successfully.']);
+    }
+
+    public function deleteLeads()
+    {
+        $branches = Branch::orderBy('id', 'DESC')->get();
+        $data = [];
+
+        return view('admin.customers.delete_leads', compact('branches', 'data'));
+    }
+
+    public function deleteLeadsShow(Request $request)
+    {
+        $loginBranchesId = Session::get('user')->branches_id;
+        $loginRole = Session::get('user')->role;
+        if ($loginRole == 'Admin') {
+            $branches = Branch::orderBy('id', 'DESC')->get();
+        } else {
+            $branches = Branch::where('id', $loginBranchesId)->get();
+        }
+        $data = Customer::query()
+            ->when(
+                $request->filled('branches_id') && $request->branches_id !== 'ALL',
+                fn($q) =>
+                $q->where('branches_id', $request->branches_id)
+            )
+            ->when(
+                $request->filled('users_id') && $request->users_id !== 'ALL',
+                fn($q) =>
+                $q->where('users_id', $request->users_id)
+            )
+            ->when(
+                $request->filled('status') && is_array($request->status) && !in_array('ALL', $request->status) && count($request->status),
+                fn($q) =>
+                $q->whereIn('status', $request->status)
+            )
+            ->when(
+                $request->start_date,
+                fn($q, $start) =>
+                $q->whereDate($request->date_by ?? 'created_at', '>=', $start)
+            )
+            ->when(
+                $request->end_date,
+                fn($q, $end) =>
+                $q->whereDate($request->date_by ?? 'created_at', '<=', $end)
+            )
+            ->get();
+
+        if ($request->has('download')) {
+            $fileName = time() . '_customers.xlsx';  // Change file extension to .xlsx
+            return Excel::download(new CustomersExport($data), $fileName, \Maatwebsite\Excel\Excel::XLSX);
+        }
+
+        return view('admin.customers.delete_leads', compact('branches', 'data'));
     }
 }

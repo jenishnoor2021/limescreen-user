@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0 font-size-18">Customer Report</h4>
+            <h4 class="mb-sm-0 font-size-18">Delete Leads</h4>
         </div>
     </div>
 </div>
@@ -29,7 +29,7 @@
                 </div>
                 @endif
 
-                <form id="filterForm" action="{{ route('admin.export.show') }}" name="exportShow" method="GET"
+                <form id="filterForm" action="{{ route('admin.delete-leads.show') }}" name="deleteLeadsShow" method="GET"
                     enctype="multipart/form-data">
                     @csrf
 
@@ -135,7 +135,7 @@
                                 <div class="d-flex gap-2">
                                     <input type="submit" class="btn btn-success mt-3 mt-lg-0" value="Show" />
                                     <a class="btn btn-light mt-3 mt-lg-0"
-                                        href="{{ URL::to('/admin/report') }}">Clear</a>
+                                        href="{{ URL::to('/admin/delete-leads') }}">Clear</a>
                                 </div>
                             </div>
                         </div>
@@ -150,16 +150,18 @@
         <div class="card">
             <div class="card-body">
                 @if(Session::get('user')['role'] == 'Admin')
-                <button type="button" class="btn btn-success mb-3" id="exportBtn">Export Excel</button>
+                <button class="btn btn-danger waves-effect waves-light"
+                    id="delete_selected_btn" style="font-size:15px;margin-bottom:10px;">Delete Selected</button>
                 @endif
                 <table id="datatable" class="table table-bordered dt-responsive nowrap w-100 mt-3">
                     <thead>
                         <tr>
-                            <th><strong>Action</strong></th>
-                            <th><strong>Status Date</strong></th>
-                            <th><strong>Import Date</strong></th>
+                            <th></th>
+                            <th><input type="checkbox" id="select_all"></th>
                             <th><strong>Branch</strong></th>
                             <th><strong>User</strong></th>
+                            <th><strong>Status Date</strong></th>
+                            <th><strong>Import Date</strong></th>
                             <th><strong>Kid Name</strong></th>
                             <th><strong>Parent Name</strong></th>
                             <th><strong>Email</strong></th>
@@ -173,15 +175,14 @@
                     <tbody>
                         @foreach($data as $customer)
                         <tr>
+                            <td></td>
                             <td>
-                                <a href="{{ route('admin.customers.edit', $customer->id) }}"
-                                    class="btn btn-outline-primary waves-effect waves-light"><i
-                                        class="fa fa-edit"></i></a>
+                                <input type="checkbox" class="row_checkbox" value="{{ $customer->id }}">
                             </td>
-                            <td>{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('d-m-Y') : '-' }}</td>
-                            <td>{{ $customer->created_at->format('d-m-Y') }}</td>
                             <td>{{ $customer->branches->name ?? '' }}</td>
                             <td>{{ $customer->users->name ?? '' }}</td>
+                            <td>{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('d-m-Y') : '-' }}</td>
+                            <td>{{ $customer->created_at->format('d-m-Y') }}</td>
                             <td>{{ $customer->child_name }}</td>
                             <td>{{ $customer->parent_name }}</td>
                             <td>{{ $customer->email }}</td>
@@ -213,7 +214,7 @@
 @section('script')
 <script>
     $(function() {
-        $("form[name='exportShow']").validate({
+        $("form[name='deleteLeadsShow']").validate({
             rules: {
                 branches_id: {
                     required: true,
@@ -270,41 +271,55 @@
         }
     });
 
-    // $(document).ready(function() {
-    //     $('#filterForm').on('submit', function(e) {
-    //         e.preventDefault();
+    // Select/Deselect All
+    document.getElementById('select_all').addEventListener('change', function() {
+        let checkboxes = document.querySelectorAll('.row_checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
 
-    //         const query = $(this).serialize();
+    // Uncheck Select All if any individual checkbox is unchecked
+    document.querySelectorAll('.row_checkbox').forEach(cb => {
+        cb.addEventListener('change', function() {
+            if (!this.checked) {
+                document.getElementById('select_all').checked = false;
+            } else {
+                let allChecked = [...document.querySelectorAll('.row_checkbox')].every(cb => cb
+                    .checked);
+                document.getElementById('select_all').checked = allChecked;
+            }
+        });
+    });
 
-    //         $.ajax({
-    //             url: $(this).attr('action') + '?' + query,
-    //             method: 'GET',
-    //             success: function(response) {
-    //                 $('#filterModalBody').html(response.html);
-    //                 $('#filterModal').modal('show');
+    // Delete selected
+    document.getElementById('delete_selected_btn').addEventListener('click', function() {
+        let selectedIds = Array.from(document.querySelectorAll('.row_checkbox:checked')).map(cb => cb.value);
+        if (selectedIds.length === 0) {
+            alert("Please select at least one Lead.");
+            return;
+        }
 
-    //                 if (response.hasData) {
-    //                     $('#exportBtn').prop('disabled', false);
-    //                 } else {
-    //                     $('#exportBtn').prop('disabled', true);
-    //                 }
-    //             },
-    //             error: function() {
-    //                 alert('Failed to load report data.');
-    //             }
-    //         });
-    //     });
-    // });
+        if (!confirm("Are you sure you want to delete selected Leads?")) return;
 
-    $('#exportBtn').on('click', function() {
-        // $('#filterForm').data('exporting', true).trigger('submit');
-        const form = $('#filterForm');
-        const action = form.attr('action');
-        const formData = form.serialize(); // convert form data to query string
-
-        // Create a hidden iframe or redirect
-        const url = `${action}?${formData}&download=1`;
-        window.location.href = url;
+        fetch("{{ route('admin.customers.bulkDelete') }}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    ids: selectedIds
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert("Something went wrong.");
+                }
+            })
+            .catch(err => console.error(err));
     });
 </script>
 @endsection

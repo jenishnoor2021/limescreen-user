@@ -27,7 +27,7 @@
             <td>{{ $customer->whatsapp_number }}</td>
             <td>{{ $customer->city }}</td>
             <td>{{ $customer->status }}</td>
-            <td>{{ !empty($customer->visited_date) ? \Carbon\Carbon::parse($customer->visited_date)->format('d-m-Y') : '-' }}</td>
+            <td>{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('d-m-Y') : '-' }}</td>
             <td>{{ $customer->remark }}</td>
             <td>{{ $customer->created_at->format('d-m-Y') }}</td>
         </tr>

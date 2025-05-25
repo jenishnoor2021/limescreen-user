@@ -68,7 +68,7 @@
                                     href="{{ route('admin.users.create') }}"><i class="fa fa-plus editable"
                                         style="font-size:15px;">&nbsp;ADD</i></a>
                                 @if (Session::get('user')['role'] == 'Admin')
-                                <form method="GET" action="{{ route('admin.users.index') }}" class="">
+                                <form method="GET" action="{{ route('admin.users.index') }}" class="d-flex align-items-center gap-2">
                                     <select name="branch" class="form-select w-auto" onchange="this.form.submit()">
                                         <option value="" {{ request()->branch == '' ? 'selected' : '' }}>Select Branch</option>
                                         <option value="" {{ request()->branch == '' ? 'selected' : '' }}>All</option>
@@ -76,6 +76,11 @@
                                         <option value="{{$branch->id}}"
                                             {{ request()->branch == $branch->id ? 'selected' : '' }}>{{$branch->name}}</option>
                                         @endforeach
+                                    </select>
+                                    <select name="selectType" class="form-select w-auto" onchange="this.form.submit()">
+                                        <option value="ALL" {{ request()->selectType == 'ALL' ? 'selected' : '' }}>ALL</option>
+                                        <option value="BreanchHead" {{ request()->selectType == 'BreanchHead' ? 'selected' : '' }}>Breanch Head</option>
+                                        <option value="User" {{ request()->selectType == 'User' ? 'selected' : '' }}>Users</option>
                                     </select>
                                 </form>
                                 @endif
@@ -107,7 +112,7 @@
                                 <a href="{{ route('admin.users.edit', $user->id) }}"
                                     class="btn btn-outline-primary waves-effect waves-light"><i
                                         class="fa fa-edit"></i></a>
-                                @if (Session::get('user')['role'] != 'User')
+                                @if (Session::get('user')['role'] == 'Admin')
                                 <a href="{{ route('admin.users.destroy', $user->id) }}"
                                     onclick="return confirm('Sure ! You want to delete ?');"
                                     class="btn btn-outline-danger waves-effect waves-light"><i

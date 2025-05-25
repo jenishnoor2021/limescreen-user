@@ -117,6 +117,10 @@ class AdminController extends Controller
             if ($request->filled('branch')) {
                 $usersQuery->where('branches_id', $request->branch);
             }
+
+            if ($request->filled('selectType') && $request->selectType !== 'ALL') {
+                $usersQuery->where('role', $request->selectType);
+            }
         }
 
         $users = $usersQuery

@@ -138,11 +138,11 @@
                     </div>
                     <div class="col-md-3" id="ifVisitedDiv" style="display:none">
                         <div class="mb-3">
-                            <label for="visited_date" class="form-label">Visited Date<span
+                            <label for="status_change_date" class="form-label">Visited Date<span
                                     class="text-danger">*</span></label>
-                            <input type="date" name="visited_date" class="form-control" id="visited_date" placeholder="Enter visited date" required>
-                            @if ($errors->has('visited_date'))
-                            <div class="error text-danger">{{ $errors->first('visited_date') }}</div>
+                            <input type="date" name="status_change_date" class="form-control" id="status_change_date" placeholder="Enter visited date" required>
+                            @if ($errors->has('status_change_date'))
+                            <div class="error text-danger">{{ $errors->first('status_change_date') }}</div>
                             @endif
                         </div>
                     </div>

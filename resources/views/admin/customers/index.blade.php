@@ -108,7 +108,7 @@
                             @if(Session::get('user')['role'] == 'Admin')
                             <th><input type="checkbox" id="select_all"></th>
                             @endif
-                            <!-- <th>Visited Date</th> -->
+                            <th>Status Date</th>
                             <th>Import Date</th>
                             <th>Branch</th>
                             <th>User</th>
@@ -135,7 +135,7 @@
                                             <i class="fa fa-edit"></i>
                                         </a>
 
-                                        @if(Session::get('user')['role'] != 'User')
+                                        @if(Session::get('user')['role'] == 'Admin')
                                         <a href="{{ route('admin.customers.destroy', $customer->id) }}"
                                             onclick="return confirm('Sure! You want to delete?');"
                                             class="btn btn-outline-danger btn-sm" title="Delete">
@@ -156,14 +156,14 @@
 
                                         <input type="date" class="form-control form-control-sm visited-date-input"
                                             style="{{ $customer->status == 'Visited' ? '' : 'display: none;' }}"
-                                            value="{{ $customer->visited_date }}" />
+                                            value="{{ $customer->status_change_date }}" />
                                     </div>
                                 </div>
                             </td>
                             @if(Session::get('user')['role'] == 'Admin')
                             <td><input type="checkbox" class="row_checkbox" value="{{ $customer->id }}"></td>
                             @endif
-                            <!-- <td>{{ !empty($customer->visited_date) ? \Carbon\Carbon::parse($customer->visited_date)->format('d-m-Y') : '-' }}</td> -->
+                            <td>{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('d-m-Y') : '-' }}</td>
                             <td>{{ $customer->created_at->format('d-m-Y') }}</td>
                             <td>{{ $customer->branches->name }}</td>
                             <td>{{ $customer->users->name }}</td>
@@ -232,7 +232,7 @@
             };
 
             if (visitedDate) {
-                requestData.visited_date = visitedDate;
+                requestData.status_change_date = visitedDate;
             }
 
             $.ajax({
