@@ -260,7 +260,7 @@ class AdminCustomerController extends Controller
         $customer = Customer::find($request->id);
         $customer->status = $request->status;
 
-        if ($request->status_change_date === 'Visited' && $request->status_change_date) {
+        if ($request->status === 'Visited' && $request->status_change_date) {
             $customer->status_change_date = $request->status_change_date;
         } else {
             $customer->status_change_date = today();

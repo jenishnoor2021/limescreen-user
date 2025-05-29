@@ -41,6 +41,10 @@
                                     id="delete_selected_btn" style="font-size:15px;">Delete Selected</button>
                                 @endif
 
+                                <div id="spinner" style="display: none; text-align:center; margin-top:10px;">
+                                    <i class="fa fa-spinner fa-spin fa-2x text-primary"></i>
+                                </div>
+
                                 <form method="GET" action="{{ route('admin.customers.index') }}"
                                     class="d-flex align-items-center gap-2 flex-wrap mb-0" id="filterForm">
                                     <select name="date_filter" class="form-select w-auto"
@@ -76,7 +80,7 @@
                                         Filter
                                     </button>
 
-                                    <select class="form-select w-auto" name="status" onchange="document.getElementById('filterForm').submit()">
+                                    <select class="form-select w-auto" name="status" onchange="changeStstus();">
                                         <option value="" {{ request()->status == '' ? 'selected' : '' }}>
                                             ALL</option>
                                         <option value="NewLead" {{ request()->status == 'NewLead' ? 'selected' : '' }}>
@@ -154,9 +158,10 @@
                                             <option value="NotInterested" {{ $customer->status == 'NotInterested' ? 'selected' : '' }}>Not Interested</option>
                                         </select>
 
-                                        <input type="date" class="form-control form-control-sm visited-date-input"
+                                        <input type="date" class="form-control form-control-sm visited-date-input visited-date-update" data-id="{{ $customer->id }}"
                                             style="{{ $customer->status == 'Visited' ? '' : 'display: none;' }}"
-                                            value="{{ $customer->status_change_date }}" />
+                                            value="{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('Y-m-d') : '' }}" />
+
                                     </div>
                                 </div>
                             </td>
@@ -197,6 +202,8 @@
         sDate.style.display = isCustom ? 'block' : 'none';
         eDate.style.display = isCustom ? 'block' : 'none';
 
+        $('#spinner').show();
+
         document.getElementById('submitBtn').style.display = isCustom ? 'inline-block' : 'none';
 
         if (!isCustom) {
@@ -205,9 +212,15 @@
             document.getElementById('filterForm').submit();
         }
     }
+
+    function changeStstus() {
+        $('#spinner').show();
+        document.getElementById('filterForm').submit();
+    }
 </script>
 <script>
     $(document).ready(function() {
+        // Handle dropdown change
         $('.status-dropdown').change(function() {
             var status = $(this).val();
             var customerId = $(this).data('id');
@@ -215,12 +228,25 @@
 
             if (status === 'Visited') {
                 $dateInput.show();
-                $dateInput.off('change').on('change', function() {
-                    sendStatusUpdate(customerId, status, $(this).val());
-                });
             } else {
                 $dateInput.hide().val('');
                 sendStatusUpdate(customerId, status);
+            }
+
+            // Always update status when dropdown changes
+            // if (status !== 'Visited') {
+            //     sendStatusUpdate(customerId, status);
+            // }
+        });
+
+        // Handle date change independently
+        $('.visited-date-update').on('change', function() {
+            var visitedDate = $(this).val();
+            var customerId = $(this).data('id');
+            var status = $(this).prev('.status-dropdown').val(); // get current status
+
+            if (status === 'Visited' && visitedDate) {
+                sendStatusUpdate(customerId, status, visitedDate);
             }
         });
 
@@ -235,6 +261,8 @@
                 requestData.status_change_date = visitedDate;
             }
 
+            $('#spinner').show();
+
             $.ajax({
                 url: '/customers/update-status',
                 method: 'POST',
@@ -245,6 +273,9 @@
                 },
                 error: function(xhr) {
                     alert('Failed to update status');
+                },
+                complete: function() {
+                    $('#spinner').hide();
                 }
             });
         }

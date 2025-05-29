@@ -92,8 +92,8 @@
                                     </label><br />
                                     <label class="form-check-label mb-2">
                                         <input type="checkbox" name="status[]" class="form-check-input"
-                                            value="Not_Interested"
-                                            {{ in_array('Not_Interested', (array) request()->status) ? 'checked' : '' }}>
+                                            value="NotInterested"
+                                            {{ in_array('NotInterested', (array) request()->status) ? 'checked' : '' }}>
                                         Not interested
                                     </label><br />
                                 </div>
@@ -132,10 +132,13 @@
                             </div>
 
                             <div class="col-lg-1 align-self-center">
-                                <div class="d-flex gap-2">
+                                <div class="d-flex align-items-center gap-2">
                                     <input type="submit" class="btn btn-success mt-3 mt-lg-0" value="Show" />
                                     <a class="btn btn-light mt-3 mt-lg-0"
                                         href="{{ URL::to('/admin/delete-leads') }}">Clear</a>
+                                    <div id="spinner" style="display: none;">
+                                        <i class="fa fa-spinner fa-spin text-primary" style="font-size: 1.5rem;"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -224,6 +227,7 @@
                 },
             },
             submitHandler: function(form) {
+                $('#spinner').show();
                 form.submit();
             }
         });
