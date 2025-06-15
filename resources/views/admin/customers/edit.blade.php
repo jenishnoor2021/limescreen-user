@@ -66,7 +66,7 @@
                 @endif
 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="mb-3">
                             <label for="child_name" class="form-label">Child Name<span
                                     class="text-danger">*</span></label>
@@ -77,7 +77,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="mb-3">
                             <label for="parent_name" class="form-label">Parents name<span
                                     class="text-danger">*</span></label>
@@ -88,13 +88,24 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email<span class="text-danger">*</span></label>
                             <input type="email" name="email" class="form-control" id="email"
                                 placeholder="Enter email" value="{{ $customer->email }}" required>
                             @if ($errors->has('email'))
                             <div class="error text-danger">{{ $errors->first('email') }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" name="city" class="form-control" id="city"
+                                placeholder="Enter city" value="{{ $customer->city }}" required>
+                            @if ($errors->has('city'))
+                            <div class="error text-danger">{{ $errors->first('city') }}</div>
                             @endif
                         </div>
                     </div>
@@ -139,17 +150,22 @@
                                 <option value="NotInterested"
                                     {{ $customer->status == 'NotInterested' ? 'selected' : '' }}>Not interested
                                 </option>
+                                <option value="NotAnswered" {{ $customer->status == 'NotAnswered' ? 'selected' : '' }}>Not answered </option>
+                                <option value="Clash" {{ $customer->status == 'Clash' ? 'selected' : '' }}>Clash</option>
+                                <option value="Sending" {{ $customer->status == 'Sending' ? 'selected' : '' }}>Sending</option>
+                                <option value="Confirming" {{ $customer->status == 'Confirming' ? 'selected' : '' }}>Confirming</option>
+                                <option value="Confirmed" {{ $customer->status == 'Confirmed' ? 'selected' : '' }}>Confirmed</option>
                             </select>
                             @if ($errors->has('status'))
                             <div class="error text-danger">{{ $errors->first('status') }}</div>
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-3" id="ifVisitedDiv" style="display:none">
+                    <!-- <div class="col-md-3" id="ifVisitedDiv" style="display:none"> -->
+                    <div class="col-md-3">
                         <div class="mb-3">
-                            <label for="status_change_date" class="form-label">Visited Date<span
-                                    class="text-danger">*</span></label>
-                            <input type="date" name="status_change_date" class="form-control" id="status_change_date" placeholder="Enter visited date" value="{{$customer->status_change_date}}" required>
+                            <label for="status_change_date" class="form-label">Status Update Date<span class="text-danger">*</span></label>
+                            <input type="date" name="status_change_date" class="form-control" id="status_change_date" placeholder="Enter visited date" value="{{ \Carbon\Carbon::parse($customer->status_change_date)->format('Y-m-d') }}" required>
                             @if ($errors->has('status_change_date'))
                             <div class="error text-danger">{{ $errors->first('status_change_date') }}</div>
                             @endif
@@ -165,13 +181,13 @@
                     @endif
                 </div>
 
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="address" class="form-label">Address</label>
                     <textarea type="text" name="address" class="form-control" id="address" placeholder="Enter Address">{{ $customer->address }}</textarea>
                     @if ($errors->has('address'))
                     <div class="error text-danger">{{ $errors->first('address') }}</div>
                     @endif
-                </div>
+                </div> -->
 
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-md">Update</button>

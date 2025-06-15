@@ -65,7 +65,7 @@
                 @endif
 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="mb-3">
                             <label for="child_name" class="form-label">Child Name<span
                                     class="text-danger">*</span></label>
@@ -76,7 +76,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="mb-3">
                             <label for="parent_name" class="form-label">Parents name<span
                                     class="text-danger">*</span></label>
@@ -87,13 +87,24 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email<span class="text-danger">*</span></label>
                             <input type="email" name="email" class="form-control" id="email"
                                 placeholder="Enter email" required>
                             @if ($errors->has('email'))
                             <div class="error text-danger">{{ $errors->first('email') }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" name="city" class="form-control" id="city"
+                                placeholder="Enter city" value="" required>
+                            @if ($errors->has('city'))
+                            <div class="error text-danger">{{ $errors->first('city') }}</div>
                             @endif
                         </div>
                     </div>
@@ -130,15 +141,21 @@
                                 <option value="PhotoReceived">Photo Received</option>
                                 <option value="Interested">Interested</option>
                                 <option value="NotInterested">Not interested</option>
+                                <option value="NotAnswered">Not answered </option>
+                                <option value="Clash">Clash</option>
+                                <option value="Sending">Sending</option>
+                                <option value="Confirming">Confirming</option>
+                                <option value="Confirmed">Confirmed</option>
                             </select>
                             @if ($errors->has('status'))
                             <div class="error text-danger">{{ $errors->first('status') }}</div>
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-3" id="ifVisitedDiv" style="display:none">
+                    <!-- <div class="col-md-3" id="ifVisitedDiv" style="display:none"> -->
+                    <div class="col-md-3">
                         <div class="mb-3">
-                            <label for="status_change_date" class="form-label">Visited Date<span
+                            <label for="status_change_date" class="form-label">Status Update Date<span
                                     class="text-danger">*</span></label>
                             <input type="date" name="status_change_date" class="form-control" id="status_change_date" placeholder="Enter visited date" required>
                             @if ($errors->has('status_change_date'))
@@ -156,13 +173,13 @@
                     @endif
                 </div>
 
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="address" class="form-label">Address</label>
                     <textarea type="text" name="address" class="form-control" id="address" placeholder="Enter Address">{{ old('address') }}</textarea>
                     @if ($errors->has('address'))
                     <div class="error text-danger">{{ $errors->first('address') }}</div>
                     @endif
-                </div>
+                </div> -->
 
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-md">Submit</button>

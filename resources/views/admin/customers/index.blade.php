@@ -1,4 +1,13 @@
 @extends('layouts.admin')
+@section('style')
+<style>
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+</style>
+@endsection
 @section('content')
 <!-- start page title -->
 <div class="row">
@@ -96,7 +105,32 @@
                                         <option value="NotInterested"
                                             {{ request()->status == 'NotInterested' ? 'selected' : '' }}>Not interested
                                         </option>
+                                        <option value="NotAnswered"
+                                            {{ request()->status == 'NotAnswered' ? 'selected' : '' }}>Not answered
+                                        </option>
+                                        <option value="Clash"
+                                            {{ request()->status == 'Clash' ? 'selected' : '' }}>Clash
+                                        </option>
+                                        <option value="Sending"
+                                            {{ request()->status == 'Sending' ? 'selected' : '' }}>Sending
+                                        </option>
+                                        <option value="Confirming"
+                                            {{ request()->status == 'Confirming' ? 'selected' : '' }}>Confirming
+                                        </option>
+                                        <option value="Confirmed"
+                                            {{ request()->status == 'Confirmed' ? 'selected' : '' }}>Confirmed
+                                        </option>
                                     </select>
+
+                                    <!-- 🔍 New search input -->
+                                    <input type="text" name="search" value="{{ request('search') }}" class="form-control w-auto"
+                                        placeholder="Search by name, mobile, WhatsApp" />
+
+                                    <!-- Submit button for custom date range -->
+                                    <button type="submit" class="btn btn-secondary">
+                                        Search
+                                    </button>
+
                                 </form>
 
                             </div>
@@ -105,86 +139,99 @@
                     </div>
                 </div>
 
-                <table id="datatable" class="table table-bordered dt-responsive nowrap w-100 mt-3">
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            @if(Session::get('user')['role'] == 'Admin')
-                            <th><input type="checkbox" id="select_all"></th>
-                            @endif
-                            <th>Status Date</th>
-                            <th>Import Date</th>
-                            <th>Branch</th>
-                            <th>User</th>
-                            <th>Child Name</th>
-                            <th>Parent Name</th>
-                            <th>Email</th>
-                            <th>Mobile</th>
-                            <th>Whatsapp No</th>
-                            <th>Status</th>
-                            <th>Remark</th>
-                        </tr>
-                    </thead>
+                <div class="table-responsive" style="overflow-x: auto;">
+                    <table id="datatable1" class="table table-bordered dt-responsive nowrap w-100 mt-3">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                @if(Session::get('user')['role'] == 'Admin')
+                                <th><input type="checkbox" id="select_all"></th>
+                                @endif
+                                <th>Status Date</th>
+                                <th>Import Date</th>
+                                <th>Branch</th>
+                                <th>User</th>
+                                <th>Child Name</th>
+                                <th>Parent Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Whatsapp No</th>
+                                <th>Status</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        @foreach ($customers as $customer)
-                        <tr>
-                            <td>
-                                <div class="d-flex flex-column gap-2">
+                        <tbody>
+                            @foreach ($customers as $customer)
+                            <tr>
+                                <td>
+                                    <div class="d-flex flex-column gap-2">
 
-                                    <!-- Action Buttons -->
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ route('admin.customers.edit', $customer->id) }}"
-                                            class="btn btn-outline-primary btn-sm" title="Edit">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
+                                        <!-- Action Buttons -->
+                                        <div class="d-flex gap-2">
+                                            <a href="{{ route('admin.customers.edit', $customer->id) }}"
+                                                class="btn btn-outline-primary btn-sm" title="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
 
-                                        @if(Session::get('user')['role'] == 'Admin')
-                                        <a href="{{ route('admin.customers.destroy', $customer->id) }}"
-                                            onclick="return confirm('Sure! You want to delete?');"
-                                            class="btn btn-outline-danger btn-sm" title="Delete">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                        @endif
+                                            @if(Session::get('user')['role'] == 'Admin')
+                                            <a href="{{ route('admin.customers.destroy', $customer->id) }}"
+                                                onclick="return confirm('Sure! You want to delete?');"
+                                                class="btn btn-outline-danger btn-sm" title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                            @endif
+                                        </div>
+
+                                        <!-- Status Dropdown & Visited Date -->
+                                        <div class="d-flex flex-column gap-1">
+                                            <select class="form-select form-select-sm status-dropdown" data-id="{{ $customer->id }}">
+                                                <option value="NewLead" {{ $customer->status == 'NewLead' ? 'selected' : '' }}>New Lead</option>
+                                                <option value="Visited" {{ $customer->status == 'Visited' ? 'selected' : '' }}>Visited</option>
+                                                <option value="PhotoReceived" {{ $customer->status == 'PhotoReceived' ? 'selected' : '' }}>Photo Received</option>
+                                                <option value="Interested" {{ $customer->status == 'Interested' ? 'selected' : '' }}>Interested</option>
+                                                <option value="NotInterested" {{ $customer->status == 'NotInterested' ? 'selected' : '' }}>Not Interested</option>
+                                                <option value="NotAnswered" {{ $customer->status == 'NotAnswered' ? 'selected' : '' }}>Not answered</option>
+                                                <option value="Clash" {{ $customer->status == 'Clash' ? 'selected' : '' }}>Clash</option>
+                                                <option value="Sending" {{ $customer->status == 'Sending' ? 'selected' : '' }}>Sending</option>
+                                                <option value="Confirming" {{ $customer->status == 'Confirming' ? 'selected' : '' }}>Confirming</option>
+                                                <option value="Confirmed" {{ $customer->status == 'Confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                            </select>
+
+                                            <input type="date" class="form-control form-control-sm visited-date-input visited-date-update" data-id="{{ $customer->id }}"
+                                                style="{{ $customer->status == 'Visited' ? '' : 'display: none;' }}"
+                                                value="{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('Y-m-d') : '' }}" />
+
+                                        </div>
                                     </div>
+                                </td>
+                                @if(Session::get('user')['role'] == 'Admin')
+                                <td><input type="checkbox" class="row_checkbox" value="{{ $customer->id }}"></td>
+                                @endif
+                                <td>{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('d-m-Y') : '-' }}</td>
+                                <td>{{ $customer->created_at->format('d-m-Y') }}</td>
+                                <td>{{ $customer->branches->name }}</td>
+                                <td>{{ $customer->users->name }}</td>
+                                <td>{{ $customer->child_name }}</td>
+                                <td>{{ $customer->parent_name }}</td>
+                                <td>{{ $customer->email }}</td>
+                                <td>{{ $customer->mobile }}</td>
+                                <td>{{ $customer->whatsapp_number }}</td>
+                                <td>{{ $customer->status }}</td>
+                                <td>
+                                    <p class="add-read-more show-less-content">{{ $customer->remark }}</p>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
-                                    <!-- Status Dropdown & Visited Date -->
-                                    <div class="d-flex flex-column gap-1">
-                                        <select class="form-select form-select-sm status-dropdown" data-id="{{ $customer->id }}">
-                                            <option value="NewLead" {{ $customer->status == 'NewLead' ? 'selected' : '' }}>New Lead</option>
-                                            <option value="Visited" {{ $customer->status == 'Visited' ? 'selected' : '' }}>Visited</option>
-                                            <option value="PhotoReceived" {{ $customer->status == 'PhotoReceived' ? 'selected' : '' }}>Photo Received</option>
-                                            <option value="Interested" {{ $customer->status == 'Interested' ? 'selected' : '' }}>Interested</option>
-                                            <option value="NotInterested" {{ $customer->status == 'NotInterested' ? 'selected' : '' }}>Not Interested</option>
-                                        </select>
-
-                                        <input type="date" class="form-control form-control-sm visited-date-input visited-date-update" data-id="{{ $customer->id }}"
-                                            style="{{ $customer->status == 'Visited' ? '' : 'display: none;' }}"
-                                            value="{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('Y-m-d') : '' }}" />
-
-                                    </div>
-                                </div>
-                            </td>
-                            @if(Session::get('user')['role'] == 'Admin')
-                            <td><input type="checkbox" class="row_checkbox" value="{{ $customer->id }}"></td>
-                            @endif
-                            <td>{{ !empty($customer->status_change_date) ? \Carbon\Carbon::parse($customer->status_change_date)->format('d-m-Y') : '-' }}</td>
-                            <td>{{ $customer->created_at->format('d-m-Y') }}</td>
-                            <td>{{ $customer->branches->name }}</td>
-                            <td>{{ $customer->users->name }}</td>
-                            <td>{{ $customer->child_name }}</td>
-                            <td>{{ $customer->parent_name }}</td>
-                            <td>{{ $customer->email }}</td>
-                            <td>{{ $customer->mobile }}</td>
-                            <td>{{ $customer->whatsapp_number }}</td>
-                            <td>{{ $customer->status }}</td>
-                            <td>
-                                <p class="add-read-more show-less-content">{{ $customer->remark }}</p>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="row mt-4">
+                    <div class="col-sm-12" style="display:flex;justify-content:center;">
+                        {{$customers->links('pagination::bootstrap-4')}}
+                    </div>
+                </div>
 
             </div>
         </div>

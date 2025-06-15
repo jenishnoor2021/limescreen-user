@@ -96,6 +96,36 @@
                                             {{ in_array('NotInterested', (array) request()->status) ? 'checked' : '' }}>
                                         Not interested
                                     </label><br />
+                                    <label class="form-check-label mb-2">
+                                        <input type="checkbox" name="status[]" class="form-check-input"
+                                            value="NotAnswered"
+                                            {{ in_array('NotAnswered', (array) request()->status) ? 'checked' : '' }}>
+                                        Not answered
+                                    </label><br />
+                                    <label class="form-check-label mb-2">
+                                        <input type="checkbox" name="status[]" class="form-check-input"
+                                            value="Clash"
+                                            {{ in_array('Clash', (array) request()->status) ? 'checked' : '' }}>
+                                        Clash
+                                    </label><br />
+                                    <label class="form-check-label mb-2">
+                                        <input type="checkbox" name="status[]" class="form-check-input"
+                                            value="Sending"
+                                            {{ in_array('Sending', (array) request()->status) ? 'checked' : '' }}>
+                                        Sending
+                                    </label><br />
+                                    <label class="form-check-label mb-2">
+                                        <input type="checkbox" name="status[]" class="form-check-input"
+                                            value="Confirming"
+                                            {{ in_array('Confirming', (array) request()->status) ? 'checked' : '' }}>
+                                        Confirming
+                                    </label><br />
+                                    <label class="form-check-label mb-2">
+                                        <input type="checkbox" name="status[]" class="form-check-input"
+                                            value="Confirmed"
+                                            {{ in_array('Confirmed', (array) request()->status) ? 'checked' : '' }}>
+                                        Confirmed
+                                    </label><br />
                                 </div>
                                 @if ($errors->has('status'))
                                 <div class="error text-danger">{{ $errors->first('status') }}</div>
